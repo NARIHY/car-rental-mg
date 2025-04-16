@@ -1,6 +1,13 @@
 api_platform:
-    title: Hello API Platform
-    version: 1.0.0
+    title: CAR LOCATION
+    version: 0.0.1
+    description: 'API for managing car locations'
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']
+        xml: ['application/xml']
+        csv: ['text/csv']
     defaults:
         stateless: true
         cache_headers:
