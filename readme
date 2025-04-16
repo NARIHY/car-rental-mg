@@ -1,0 +1,217 @@
+```md
+# 🚘 Car Rental MG API 🇲🇬
+
+Une API RESTful pour gérer la **location de voitures à Madagascar**, développée en **Symfony** avec **API Platform**. Ce backend permet la gestion complète de voitures, agences, clients, réservations, et paiements, avec authentification sécurisée via JWT.
+
+---
+
+## 📌 Objectif
+
+Créer une plateforme de location de voitures modulable, pensée pour le marché malgache, permettant aux agences de proposer leurs véhicules, et aux clients de réserver facilement.
+
+---
+
+## 🧱 Stack technique
+
+- **Symfony 6.x**
+- **API Platform**
+- **Doctrine ORM**
+- **JWT Auth (LexikJWTAuthenticationBundle)**
+- **MySQL / PostgreSQL**
+- **PHPUnit pour les tests**
+- **CORS activé (pour intégration avec frontends React/Angular)**
+
+---
+
+## 🧩 Entités principales
+
+### 🚗 `Car`
+Représente une voiture disponible à la location.
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| id | UUID | Identifiant unique |
+| brand | string | Marque (Toyota, Renault, etc.) |
+| model | string | Modèle |
+| licensePlate | string | Numéro d'immatriculation |
+| fuelType | string | Essence / Diesel / Électrique |
+| transmission | string | Manuelle / Automatique |
+| dailyRate | float | Prix par jour en **Ariary (Ar)** |
+| isAvailable | bool | Disponible à la location |
+| agency | relation | Agence propriétaire |
+| images | array | URLs des photos |
+
+---
+
+### 🏢 `Agency`
+Agence ou propriétaire de véhicules.
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| id | UUID | Identifiant |
+| name | string | Nom de l’agence |
+| location | string | Ville, quartier (ex: Antananarivo, Mahajanga) |
+| contact | string | Téléphone, email |
+| user | relation | Utilisateur lié (pour le login admin agence) |
+
+---
+
+### 👤 `Customer`
+Client effectuant une réservation.
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| id | UUID | Identifiant |
+| fullName | string | Nom complet |
+| phone | string | Numéro de téléphone |
+| email | string | Email |
+| user | relation | Utilisateur lié (login client) |
+
+---
+
+### 📆 `Rental`
+Représente une réservation de véhicule.
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| id | UUID | Identifiant |
+| car | relation | Véhicule réservé |
+| customer | relation | Client |
+| startDate | datetime | Date de début |
+| endDate | datetime | Date de fin |
+| totalAmount | float | Montant total (en Ar) |
+| status | string | pending / confirmed / cancelled / completed |
+
+---
+
+### 💳 `Payment`
+Représente un paiement lié à une réservation.
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| id | UUID | Identifiant |
+| rental | relation | Réservation liée |
+| amount | float | Montant payé |
+| method | string | Mobile Money / Espèces / Virement |
+| status | string | pending / paid / failed |
+| paidAt | datetime | Date du paiement |
+
+---
+
+### 👥 `User`
+Authentification des utilisateurs avec rôles.
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| id | UUID | Identifiant |
+| email | string | Email (unique) |
+| password | hashed | Mot de passe |
+| roles | array | ROLE_CUSTOMER, ROLE_AGENCY, ROLE_ADMIN |
+
+---
+
+## 🔐 Authentification JWT
+
+- Enregistrement/login via `/api/register` et `/api/login`
+- Utilisation de `LexikJWTAuthenticationBundle`
+- Accès sécurisé pour les agences et les admins via rôles
+
+---
+
+## 🔁 Actions disponibles (routes API Platform)
+
+### Public
+- `GET /cars` – Liste des voitures disponibles
+- `GET /cars/{id}` – Détails d’une voiture
+- `POST /register` – Créer un compte client
+- `POST /login` – Authentification
+
+### Client (`ROLE_CUSTOMER`)
+- `GET /rentals` – Liste de mes réservations
+- `POST /rentals` – Créer une réservation
+- `POST /payments` – Paiement d’une réservation
+
+### Agence (`ROLE_AGENCY`)
+- `GET /agency/cars` – Liste de mes voitures
+- `POST /agency/cars` – Ajouter une voiture
+- `PATCH /agency/cars/{id}` – Modifier une voiture
+- `GET /agency/rentals` – Réservations des clients
+
+### Admin (`ROLE_ADMIN`)
+- Gérer toutes les entités (utilisateurs, agences, voitures, paiements)
+- Statistiques mensuelles (locations, revenus, etc.)
+
+---
+
+## 📊 Exemples de logique métier
+
+- Vérifier la **disponibilité d’un véhicule** entre deux dates avant validation d’une réservation.
+- Calculer automatiquement le **montant total** :  
+  `totalAmount = dailyRate × nbJours`
+- Annulation possible **24h avant le début**.
+- Génération de facture PDF à chaque réservation (si besoin).
+- Authentification nécessaire pour effectuer une réservation.
+
+---
+
+## 📍 Particularités Madagascar
+
+- Monnaie en **Ariary (Ar)**
+- Intégration possible de **paiement mobile** : Orange Money, Mvola, Airtel Money
+- Géolocalisation simplifiée : villes, quartiers
+- Langues supportées : **Français**, **Malgache** (future extension)
+
+---
+
+## 🧪 Tests
+
+```bash
+php bin/phpunit
+```
+
+Tests unitaires pour :
+- Disponibilité de voiture
+- Authentification
+- Paiement
+- Calcul du montant
+
+---
+
+## ▶️ Lancement du serveur
+
+```bash
+symfony serve
+```
+
+Accès à la documentation interactive :  
+`http://localhost:8000/api`
+
+---
+
+## 📦 Déploiement
+
+- `.env.production` à configurer
+- Utilisation de Docker ou serveur LAMP/LEMP
+- Base de données à distance ou Dockerized
+
+---
+
+## ✨ À venir
+
+- Intégration des paiements réels (via APIs mobile money)
+- Système de notation des agences
+- Notifications email/SMS
+- Gestion des contrats numériques PDF
+
+---
+
+## 👨‍💻 Auteur
+
+Développé par un ingénieur logiciel malgache passionné 👨‍💻  
+Contact : `votre.email@example.com`
+
+---
+
+## 📄 Licence
+
+MIT – Open source & contributif. N’hésitez pas à fork 🔁
