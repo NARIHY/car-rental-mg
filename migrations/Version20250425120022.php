@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250416061705 extends AbstractMigration
+final class Version20250425120022 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -33,6 +33,13 @@ final class Version20250416061705 extends AbstractMigration
         $this->addSql(<<<'SQL'
             CREATE INDEX IDX_773DE69DCDEADB2A ON car (agency_id)
         SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
+            , password VARCHAR(255) NOT NULL)
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON user (email)
+        SQL);
     }
 
     public function down(Schema $schema): void
@@ -43,6 +50,9 @@ final class Version20250416061705 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE car
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP TABLE user
         SQL);
     }
 }
