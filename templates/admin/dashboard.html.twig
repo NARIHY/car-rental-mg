@@ -1,0 +1,208 @@
+{# templates/admin/dashboard.html.twig #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Tableau de bord - Car Rental Madagascar{% endblock %}
+
+{% block main %}
+    <div class="dashboard-container">
+        {# Statistiques #}
+        <div class="stats-cards">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-calendar-check fa-fw"></i> Locations actives
+                    </h5>
+                    <p class="card-text display-4">{{ stats.activeRentals }}</p>
+                </div>
+            </div>
+            
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-car fa-fw"></i> Voitures disponibles
+                    </h5>
+                    <p class="card-text display-4">{{ stats.availableCars }}</p>
+                </div>
+            </div>
+            
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-users fa-fw"></i> Clients
+                    </h5>
+                    <p class="card-text display-4">{{ stats.totalCustomers }}</p>
+                </div>
+            </div>
+            
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-money-bill-wave fa-fw"></i> Revenus totaux
+                    </h5>
+                    <p class="card-text display-4">{{ stats.totalRevenue|number_format(0, ',', ' ') }} €</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-row">
+            {# Locations récentes #}
+            <div class="dashboard-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-check"></i> Locations récentes</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Voiture</th>
+                                    <th>Dates</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rental in recentRentals %}
+                                <tr>
+                                    <td>
+                                        {% for customer in rental.customer %}
+                                            {{ customer.fullName }}{{ not loop.last ? ', ' }}
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ rental.car.brand }} {{ rental.car.model }}</td>
+                                    <td>
+                                        {{ rental.startDate|date('d/m/Y') }} - {{ rental.endDate|date('d/m/Y') }}
+                                    </td>
+                                    <td>{{ rental.totalAmount|number_format(2, ',', ' ') }} €</td>
+                                    <td>
+                                        <span class="badge {{ rental.status ? rental.status.getBadgeClass() : 'bg-secondary' }}">
+                                            {{ rental.status ? rental.status.name : 'N/A' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\RentalCrudController').setAction('detail').setEntityId(rental.id) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">Aucune location récente</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            {# Graphique d'occupation #}
+            <div class="dashboard-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-line"></i> Activité mensuelle</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="activityChart" width="400" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# Voitures populaires #}
+        <div class="popular-cars mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-star"></i> Véhicules les plus demandés</h5>
+                </div>
+                <div class="card-body">
+                    <div class="popular-cars-grid">
+                        {% for car in popularCars %}
+                            <div class="popular-car-card">
+                                <div class="popular-car-image">
+                                    <img src="/uploads/cars/{{ car.image }}" alt="{{ car.brand }} {{ car.model }}">
+                                </div>
+                                <div class="popular-car-info">
+                                    <h5>{{ car.brand }} {{ car.model }}</h5>
+                                    <p class="car-details">
+                                        <span><i class="fas fa-gas-pump"></i> {{ car.fuelType|capitalize }}</span>
+                                        <span><i class="fas fa-cog"></i> {{ car.transmission|capitalize }}</span>
+                                    </p>
+                                    <p class="car-price">{{ car.dayilyRate|number_format(2, ',', ' ') }} € / jour</p>
+                                    <div class="car-status {{ car.isAvailable ? 'available' : 'booked' }}">
+                                        {{ car.isAvailable ? 'Disponible' : 'Non disponible' }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-center w-100">Aucune donnée disponible</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# Actions rapides #}
+        <div class="quick-actions mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bolt"></i> Actions rapides</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group" role="group">
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\RentalCrudController').setAction('new') }}" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus"></i> Nouvelle location
+                        </a>
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('new') }}" class="btn btn-success">
+                            <i class="fas fa-user-plus"></i> Nouveau client
+                        </a>
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\CarCrudController').setAction('new') }}" class="btn btn-info">
+                            <i class="fas fa-car-side"></i> Nouvelle voiture
+                        </a>
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\PayementCrudController').setAction('new') }}" class="btn btn-warning">
+                            <i class="fas fa-credit-card"></i> Nouveau paiement
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration du graphique d'activité
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+                    datasets: [{
+                        label: 'Locations',
+                        data: [12, 19, 15, 21, 32, 25, 24, 20, 30, 25, 22, 18],
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }, {
+                        label: 'Revenus (k€)',
+                        data: [20, 35, 28, 42, 58, 50, 48, 40, 60, 50, 44, 36],
+                        borderColor: '#ffc107',
+                        backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

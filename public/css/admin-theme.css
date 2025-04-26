@@ -1,0 +1,197 @@
+/* public/css/admin-theme.css */
+
+:root {
+    --car-primary: #2c3e50;
+    --car-secondary: #e74c3c;
+    --car-tertiary: #3498db;
+    --car-success: #27ae60;
+    --car-warning: #f39c12;
+    --car-light: #ecf0f1;
+    --car-dark: #2d3436;
+  }
+  
+  /* Personnalisation de la barre de navigation */
+  .ea-sidebar {
+    background-color: var(--car-primary);
+  }
+  
+  .ea-sidebar-logo-full img {
+    height: 40px;
+  }
+  
+  .ea-sidebar .menu .menu-item.active:not(.expanded) .menu-icon,
+  .ea-sidebar .menu .menu-item.active:not(.expanded) a {
+    color: var(--car-secondary);
+  }
+  
+  .ea-sidebar .menu .menu-header {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 8px 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+  
+  /* Style des cartes du tableau de bord */
+  .dashboard-container {
+    padding: 1rem 0;
+  }
+  
+  .stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .stats-cards .card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .stats-cards .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .stats-cards .card-title {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .stats-cards .card-title i {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+  }
+  
+  .stats-cards .card-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0;
+    text-align: right;
+  }
+  
+  /* Style pour les lignes du dashboard */
+  .dashboard-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .dashboard-col .card {
+    height: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .dashboard-col .card-header {
+    background-color: var(--car-light);
+    padding: 1rem;
+    border-bottom: 2px solid var(--car-primary);
+  }
+  
+  .dashboard-col .card-header h5 {
+    margin: 0;
+    color: var(--car-primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  
+  .dashboard-col .card-header h5 i {
+    margin-right: 0.5rem;
+  }
+  
+  /* Style des boutons d'action rapide */
+  .quick-actions .btn-group {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .quick-actions .btn {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .quick-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .quick-actions .btn i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Voitures populaires */
+  .popular-cars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .popular-car-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .popular-car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .popular-car-image {
+    height: 160px;
+    overflow: hidden;
+  }
+  
+  .popular-car-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .popular-car-card:hover .popular-car-image img {
+    transform: scale(1.05);
+  }
+  
+  .popular-car-info {
+    padding: 1rem;
+  }
+  
+  .popular-car-info h5 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--car-primary);
+  }
+  
+  .car-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .car-price {
+    font-weight: 700;
+    color: var(--car-success);
+  }

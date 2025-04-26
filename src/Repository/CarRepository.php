@@ -40,4 +40,16 @@ class CarRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+public function findPopularCars(int $limit = 5): array
+{
+    return $this->createQueryBuilder('c')
+        ->select('c, COUNT(r.id) AS HIDDEN rentalCount') // Compter les locations associées
+        ->leftJoin('c.rentals', 'r') // Joindre la table des locations
+        ->groupBy('c.id') // Grouper par voiture
+        ->orderBy('rentalCount', 'DESC') // Trier par nombre de locations décroissant
+        ->setMaxResults($limit) // Limiter le nombre de résultats
+        ->getQuery()
+        ->getResult();
+}
 }
