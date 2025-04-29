@@ -34,6 +34,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Customer $customer = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Agency $agency = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -127,6 +130,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->customer = $customer;
+
+        return $this;
+    }
+
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): static
+    {
+        $this->agency = $agency;
 
         return $this;
     }
