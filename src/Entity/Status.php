@@ -30,6 +30,9 @@ class Status
     #[ORM\OneToMany(targetEntity: Payement::class, mappedBy: 'status')]
     private Collection $payements;
 
+    #[ORM\Column(length: 255,nullable: true)]
+    private ?string $badgeClass = null;
+
     public function __construct()
     {
         $this->rentals = new ArrayCollection();
@@ -109,6 +112,23 @@ class Status
                 $payement->setStatus(null);
             }
         }
+
+        return $this;
+    }
+    public function __toString(): string
+    {
+        // Retourne le nom, ou une chaîne vide si jamais null
+        return (string) $this->getStatusName();
+    }
+
+    public function getBadgeClass(): ?string
+    {
+        return $this->badgeClass;
+    }
+
+    public function setBadgeClass(string $badgeClass): static
+    {
+        $this->badgeClass = $badgeClass;
 
         return $this;
     }

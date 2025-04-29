@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Agency
 {
     #[ORM\Id]
@@ -36,9 +37,26 @@ class Agency
     #[ORM\OneToMany(targetEntity: Car::class, mappedBy: 'agency')]
     private Collection $cars;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isActive = null;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $this->isActive = false; // Set default value for isActive
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -134,5 +152,23 @@ class Agency
         }
 
         return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(?bool $isActive): static
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        // Retourne le nom, ou une chaîne vide si jamais null
+        return (string) $this->getName();
     }
 }

@@ -48,10 +48,9 @@ class RentalRepository extends ServiceEntityRepository
             ->getQuery();
 
         $result = $qb->getSingleScalarResult();
-
         // Formater le résultat en Ariary
-        $formattedRevenue = number_format((float)$result, 0, '.', ' ') . ' Ariary';
-
+        $formattedRevenue = number_format((float)$result, 0, '.', ',') . ' MGA';
+        
         return $formattedRevenue;
     }
     public function findRecentRentals(int $limit = 5): array

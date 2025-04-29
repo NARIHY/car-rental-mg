@@ -39,7 +39,7 @@
                     <h5 class="card-title">
                         <i class="fas fa-money-bill-wave fa-fw"></i> Revenus totaux
                     </h5>
-                    <p class="card-text display-4">{{ stats.totalRevenue|number_format(0, ',', ' ') }} €</p>
+                    <p class="card-text display-4">{{ stats.totalRevenue}} </p>
                 </div>
             </div>
         </div>
@@ -75,10 +75,10 @@
                                     <td>
                                         {{ rental.startDate|date('d/m/Y') }} - {{ rental.endDate|date('d/m/Y') }}
                                     </td>
-                                    <td>{{ rental.totalAmount|number_format(2, ',', ' ') }} €</td>
+                                    <td>{{ rental.totalAmount|number_format(2, ',', ' ') }} MGA</td>
                                     <td>
                                         <span class="badge {{ rental.status ? rental.status.getBadgeClass() : 'bg-secondary' }}">
-                                            {{ rental.status ? rental.status.name : 'N/A' }}
+                                            {{ rental.status ? rental.status.statusName : 'N/A' }}
                                         </span>
                                     </td>
                                     <td>
@@ -130,7 +130,7 @@
                                         <span><i class="fas fa-gas-pump"></i> {{ car.fuelType|capitalize }}</span>
                                         <span><i class="fas fa-cog"></i> {{ car.transmission|capitalize }}</span>
                                     </p>
-                                    <p class="car-price">{{ car.dayilyRate|number_format(2, ',', ' ') }} € / jour</p>
+                                    <p class="car-price">{{ car.dayilyRate|number_format(2, ',', ' ') }} MGA / jour</p>
                                     <div class="car-status {{ car.isAvailable ? 'available' : 'booked' }}">
                                         {{ car.isAvailable ? 'Disponible' : 'Non disponible' }}
                                     </div>

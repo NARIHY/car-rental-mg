@@ -132,4 +132,9 @@ class Customer
 
         return $this;
     }
+    public function __toString(): string
+    {
+        // Retourne le nom, ou une chaîne vide si jamais null
+        return (string) $this->getFullName();
+    }
 }

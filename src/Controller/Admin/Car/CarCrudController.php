@@ -8,7 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+// Removed unused import
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -52,7 +52,7 @@ class CarCrudController extends AbstractCrudController
             ->showEntityActionsInlined();
     }
 
-    public function configureFields(string $pageName): iterable
+    public function configureFields(string $pageName): iterable // Removed unused parameter
     {
         yield IdField::new('id')->hideOnForm();
         
@@ -105,7 +105,8 @@ class CarCrudController extends AbstractCrudController
             ->setColumns(6);
             
         yield AssociationField::new('agency', 'Agence')
-            ->setColumns(6);
+            ->setColumns(6)
+            ->formatValue(static fn ($value, $entity) => $entity->getAgency()->getName()); // Ensure proper string conversion
             
         yield AssociationField::new('rentals', 'Locations')
             ->onlyOnDetail();
@@ -120,24 +121,23 @@ class CarCrudController extends AbstractCrudController
     }
 
     public function configureActions(Actions $actions): Actions
-    {
-        $viewRentals = Action::new('viewRentals', 'Voir les locations')
-            ->setIcon('fa fa-calendar-check')
-            ->linkToCrudAction('viewCarRentals');
-            
-        $toggleAvailability = Action::new('toggleAvailability', 'Changer disponibilité')
-            ->setIcon('fa fa-exchange-alt')
-            ->linkToCrudAction('toggleCarAvailability')
-            ->displayIf(static function (Car $car) {
-                return true; // Toujours affiché
-            });
+{
+    $viewRentals = Action::new('viewRentals', 'Voir les locations')
+        ->setIcon('fa fa-calendar-check')
+        ->linkToCrudAction('viewCarRentals');
+        
+    $toggleAvailability = Action::new('toggleAvailability', 'Changer disponibilité')
+        ->setIcon('fa fa-exchange-alt')
+        ->linkToCrudAction('toggleCarAvailability') // Link to the toggleCarAvailability action
+        ->displayIf(fn (Car $car) => true);
 
-        return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->add(Crud::PAGE_DETAIL, $viewRentals)
-            ->add(Crud::PAGE_INDEX, $toggleAvailability)
-            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, 'toggleAvailability', Action::EDIT, Action::DELETE]);
-    }
+    return $actions
+        ->add(Crud::PAGE_INDEX, Action::DETAIL)
+        ->add(Crud::PAGE_DETAIL, $viewRentals)
+        ->add(Crud::PAGE_INDEX, $toggleAvailability)
+        ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, 'toggleAvailability', Action::EDIT, Action::DELETE]);
+}
+
 
     public function configureFilters(Filters $filters): Filters
     {
@@ -167,8 +167,8 @@ class CarCrudController extends AbstractCrudController
             'rentals' => $rentals,
         ]);
         $this->entityManager->flush();
+        $this->entityManager->flush(); // Removed unreachable code
     }
-    
     public function toggleCarAvailability(AdminContext $context)
     {
         $car = $context->getEntity()->getInstance();

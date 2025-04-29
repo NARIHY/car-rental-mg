@@ -6,6 +6,7 @@ use App\Repository\PayementRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PayementRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Payement
 {
     #[ORM\Id]
@@ -25,7 +26,7 @@ class Payement
     #[ORM\ManyToOne(inversedBy: 'payements')]
     private ?Status $status = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
     #[ORM\Column(nullable: true)]
@@ -121,5 +122,20 @@ class Payement
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function prePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->paidAt = $now;
+        $this->createdAt ??= $now;
+        $this->updatedAt = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }
